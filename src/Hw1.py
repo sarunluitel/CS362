@@ -18,16 +18,29 @@
 import random
 
 data = [x for x in range(0, 100)]
-random.shuffle(data)
+
+
+# random.shuffle(data)
 
 
 def quickSelect(data, k):
+    print('working with')
+    print(data)
+
     pivot = random.randint(0, len(data) - 1)
-    smallerSet, largerSet = [], []
+    print(pivot)
+    sSet, lSet = [], []
 
     for x in data:
-        if x < pivot: smallerSet.append(x)
-        if x > pivot: largerSet.append(x)
+        if x < pivot: sSet.append(x)
+        if x > pivot: lSet.append(x)
+
+    if len(sSet) > k:
+        return quickSelect(sSet,k)
+    elif len(lSet) > k:
+        return quickSelect(lSet,len(lSet()-k))
+    else:
+        return data[0]
 
 
-quickSelect(data, 2)
+print(quickSelect(data, 55))
