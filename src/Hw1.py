@@ -22,9 +22,12 @@ random.shuffle(data)
 
 
 def quickSelect(data, k):
-
     pivot = random.randint(0, len(data) - 1)
     smallerSet, largerSet = [], []
+
+    for x in data:
+        if x < pivot: smallerSet.append(x)
+        if x > pivot: largerSet.append(x)
 
 
 quickSelect(data, 2)
