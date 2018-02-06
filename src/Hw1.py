@@ -15,6 +15,8 @@
 # There are some associated online questions that you will also need to answer.  This Survey is available just below,
 # and is a required part of the assignment.
 
+# Submitted by Sarun Luitel. CS362 Hw1
+
 import random
 import numpy as np
 
@@ -71,16 +73,32 @@ totalQS = []
 totalMoM = []
 QSmoreThenMom = 0
 
+mincount = 0
+count10 = 0
+countmedian = 0
+count90 = 0
+countmax = 0
+
 for i in range(0, 100):
     random.shuffle(data)
+    testarray = []
+
     for j in range(0, 100):
         QS = quickSelect(data, 50, 0)[1]
+        testarray.append(QS)
         C.MoMCompare = 0
         MoM(data, 50)
         MOM = C.MoMCompare
-        if QS > MOM: QSmoreThenMom += 1
-
+        if QS > MOM:
+            QSmoreThenMom += 1
         totalQS.append(QS)
+    # print(testarray)
+
+    if min(testarray) < C.MoMCompare: mincount += 1
+    if np.percentile(testarray, 10) < C.MoMCompare: count10 += 1
+    if np.percentile(testarray, 50) < C.MoMCompare: countmedian += 1
+    if np.percentile(testarray, 90) < C.MoMCompare: count90 += 1
+    if max(testarray) < C.MoMCompare: countmax += 1
 
     totalMoM.append(C.MoMCompare)
 
@@ -95,11 +113,16 @@ print('MoM Comparasions statistics: Minimum ' + str(min(totalMoM)))
 print('         10th percentile = ' + str(np.percentile(a, 10)))
 print('         Median = ' + str(np.percentile(a, 50)))
 print('         90th percentile = ' + str(np.percentile(a, 90)))
-print('         Max = ' + str(max(totalMoM))+'\n')
+print('         Max = ' + str(max(totalMoM)) + '\n')
 
 print('QS Comparasions statistics: Minimum ' + str(min(totalQS)))
 print('         10th percentile = ' + str(np.percentile(b, 10)))
 print('         Median = ' + str(np.percentile(b, 50)))
 print('         90th percentile ' + str(np.percentile(b, 90)))
-print('         Max = ' + str(max(totalQS)))
+print('         Max = ' + str(max(totalQS))+'\n')
 
+print('Minimum comparison count for QuickSearch smaller than the count for Median-of-Medians = '+str(mincount))
+print('10th smallest comparison count for QuickSearch smaller than the count for Median-of-Medians = '+str(count10))
+print('Median comparison count for QuickSearch smaller than the count for Median-of-Medians = '+str(countmedian))
+print('90th smallest comparison count for QuickSearch smaller than the count for Median-of-Medians = '+str(count90))
+print('Maximum comparison count for QuickSearch smaller than the count for Median-of-Medians = '+str(countmax))
