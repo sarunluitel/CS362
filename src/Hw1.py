@@ -16,27 +16,90 @@
 # and is a required part of the assignment.
 
 import random
-
-data = [x for x in range(0, 100)]
-
-random.shuffle(data)
+import numpy as np
 
 
-def quickSelect(data, k):
-    if len(data) == 1: return data[0]
+class C(object):
+    MoMCompare = 0
 
-    pivot = random.choice(data)
+
+def quickSelect(dataQs, k, QsCompare):
+    if len(dataQs) == 1: return dataQs[0], QsCompare
+
+    pivot = random.choice(dataQs)
 
     sSet, lSet = [], []
 
-    for x in data:
-        if x <= pivot: sSet.append(x)
-        if x > pivot: lSet.append(x)
+    for x in dataQs:
+        QsCompare += 1
+        if x < pivot: sSet.append(x)
+        if x >= pivot: lSet.append(x)
 
     if len(sSet) >= k:
-        return quickSelect(sSet, k)
+        return quickSelect(sSet, k, QsCompare)
     elif len(sSet) < k:
-        return quickSelect(lSet, k - len(sSet))
+        return quickSelect(lSet, k - len(sSet), QsCompare)
 
 
-print(quickSelect(data, 62))
+def MoM(dataMoM, i):
+    sublists = [dataMoM[j:j + 5] for j in range(0, len(dataMoM), 5)]
+    medians = [sorted(sublist)[len(sublist) // 2] for sublist in sublists]
+
+    if len(medians) <= 5:
+        pivot = sorted(medians)[len(medians) // 2]  # get the pivot
+    else:
+        pivot = MoM(medians, len(medians) // 2)  # recursion to create smallar chunks
+
+    sSet, lSet = [], []
+
+    for x in dataMoM:
+        C.MoMCompare += 1
+        if x < pivot: sSet.append(x)
+        if x > pivot: lSet.append(x)
+
+    k = len(sSet)
+    if i < k:
+        return MoM(sSet, i)
+    elif i > k:
+        return MoM(lSet, i - k - 1)
+    else:
+        return pivot
+
+
+data = [x for x in range(0, 100)]
+totalQS = []
+totalMoM = []
+QSmoreThenMom = 0
+
+for i in range(0, 100):
+    random.shuffle(data)
+    for j in range(0, 100):
+        QS = quickSelect(data, 50, 0)[1]
+        C.MoMCompare = 0
+        MoM(data, 50)
+        MOM = C.MoMCompare
+        if QS > MOM: QSmoreThenMom += 1
+
+        totalQS.append(QS)
+
+    totalMoM.append(C.MoMCompare)
+
+a = np.array(totalMoM)
+b = np.array(totalQS)
+
+print('Q1. Average comparasion in QS is  ' + str(sum(totalMoM) / len(totalMoM)))
+print('Q2. QS did ' + str(QSmoreThenMom) + ' times more comparision more than MoM')
+print('Q3. descriptive Statistics')
+
+print('MoM Comparasions statistics: Minimum ' + str(min(totalMoM)))
+print('         10th percentile = ' + str(np.percentile(a, 10)))
+print('         Median = ' + str(np.percentile(a, 50)))
+print('         90th percentile = ' + str(np.percentile(a, 90)))
+print('         Max = ' + str(max(totalMoM))+'\n')
+
+print('QS Comparasions statistics: Minimum ' + str(min(totalQS)))
+print('         10th percentile = ' + str(np.percentile(b, 10)))
+print('         Median = ' + str(np.percentile(b, 50)))
+print('         90th percentile ' + str(np.percentile(b, 90)))
+print('         Max = ' + str(max(totalQS)))
+
