@@ -7,7 +7,7 @@ class Food():
         self._sodium = sodium  # in milligrams
         self._vitC = vitC  # in milligrams
         self._vitA = vitA  # in mcg
-        self._protein =protein  # in grams
+        self._protein = protein  # in grams
         self._price = price  # in dollars
 
     def name(self):

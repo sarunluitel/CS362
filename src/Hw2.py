@@ -1,3 +1,7 @@
+# This is a Linear Programming solver. It takes nutrition facts about 5 food items.
+# Tries to give the food recommendation that minimizes the cost.
+# Written By - Sarun Luitel
+
 from scipy.optimize import minimize
 import numpy as np
 from Food import Food
@@ -37,6 +41,7 @@ def fat(foodNum):
     fat, index = 0, 0
     for food in FoodList:
         fat += foodNum[index] * food.fat()
+        index += 1
     return 20 - fat
 
 
@@ -77,7 +82,6 @@ def calories(foodNum):
     for food in FoodList:
         calories += foodNum[index] * food.calories()
         index += 1
-        print(2000 - calories)
     return 2000 - calories
 
 
@@ -92,7 +96,7 @@ def main():
     con6 = {'type': 'eq', 'fun': calories}
 
     allcons = [con1, con2, con3, con4, con5, con6]
-    foodnum = np.array([1.0, 1.0, 1.0, 1.0, 1.0])
+    foodnum = np.array([1.0, 100000.0, 1.0, 10000.0, 1.0])
 
     b = (0.1, None)
     bounds = (b, b, b, b, b)
