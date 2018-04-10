@@ -2,13 +2,27 @@ from scipy.optimize import minimize
 import numpy as np
 from Food import Food
 
-apple = Food('Apple', 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
-apple1 = Food('Apple1', 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
-chips = Food('chips', 1.0, 10.0, 10.0, 1.0, 1.0, 1.0, 1.0)
-chips1 = Food('chips1', 1.0, 10.0, 10.0, 1.0, 1.0, 1.0, 1.0)
-chips2 = Food('chips2', 1.0, 10.0, 10.0, 1.0, 1.0, 1.0, 1.0)
+# nutrition contents are calculated per kilogram of food.
+# Fat in grams, sodium, Vit C in milligrams,VitA in mcg)
+# prices from: https://www.ers.usda.gov/data-products/fruit-and-vegetable-prices.aspx
 
-FoodList = [apple, apple1, chips, chips1, chips2]
+
+apple = Food('Apple', 3.0, 520, 0, 10.4, 45.6, 572, 2.4)
+# http://nutritiondata.self.com/facts/fruits-and-fruit-juices/1809/2
+
+brownRice = Food('Brown Rice', 9.06, 1110, 2, 50, 0, 0, 26)
+# https://www.livescience.com/50461-brown-rice-health-benefits-nutrition-facts.html
+
+chickenBreast = Food('Chicken Breast', 12.05, 2930, 38, 4570, 0.0, 0.0, 158)  # chicken Breast
+# http://nutritiondata.self.com/facts/poultry-products/10046/2
+
+kidneyBeans = Food('Kidney Beans', 10.99, 1240, 0.0, 40, 12, 31.8, 91)
+# http://nutritiondata.self.com/facts/legumes-and-legume-products/4300/2
+
+yogurt = Food('Yogurt', 5.5, 610, 21, 460, 50, 1048.7, 35)
+# http://nutritiondata.self.com/facts/dairy-and-egg-products/104/2
+
+FoodList = [apple, brownRice, chickenBreast, kidneyBeans, yogurt]
 
 
 def objective(foodNum):
@@ -35,7 +49,7 @@ def sodium(foodNum):
 
 
 def vitC(foodNum):
-    vitC, index = 0,0
+    vitC, index = 0, 0
     for food in FoodList:
         vitC += foodNum[index] * food.vitC()
         index += 1
@@ -59,27 +73,31 @@ def protien(foodNum):
 
 
 def calories(foodNum):
-    calories, index = 0,0
+    calories, index = 0, 0
     for food in FoodList:
         calories += foodNum[index] * food.calories()
         index += 1
+        print(2000 - calories)
     return 2000 - calories
 
 
 def main():
     #  Order of parameters (name, price, calories, fat, sodium, vitC, vitA, protein)
 
-    con1 = {'type': 'eq', 'fun': calories}
-    con2 = {'type': 'ineq', 'fun': fat}
-    con3 = {'type': 'ineq', 'fun': sodium}
-    con4 = {'type': 'ineq', 'fun': vitC}
-    con5 = {'type': 'ineq', 'fun': vitA}
-    con6 = {'type': 'ineq', 'fun': protien}
+    con1 = {'type': 'ineq', 'fun': fat}
+    con2 = {'type': 'ineq', 'fun': sodium}
+    con3 = {'type': 'ineq', 'fun': vitC}
+    con4 = {'type': 'ineq', 'fun': vitA}
+    con5 = {'type': 'ineq', 'fun': protien}
+    con6 = {'type': 'eq', 'fun': calories}
 
     allcons = [con1, con2, con3, con4, con5, con6]
-    foodnum = np.array([1, 1, 1, 1, 1])
+    foodnum = np.array([1.0, 1.0, 1.0, 1.0, 1.0])
 
-    solution = minimize(objective, foodnum, method='SLSQP', constraints=allcons)
+    b = (0.1, None)
+    bounds = (b, b, b, b, b)
+
+    solution = minimize(objective, foodnum, method='SLSQP', constraints=allcons, bounds=bounds)
 
     print(solution)
 
